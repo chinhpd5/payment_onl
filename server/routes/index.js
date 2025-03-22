@@ -1,6 +1,7 @@
 import { Router } from "express";
 import productRouter from "./productRouter";
 import authRouter from "./authRouter";
+import paymentRouter from "./paymentRouter";
 
 const router = Router();
 
@@ -10,5 +11,6 @@ router.get("/", function (req, res) {
 
 router.use("/products", productRouter);
 router.use("/auth", authRouter);
+router.use("/", paymentRouter);
 
 export default router;
