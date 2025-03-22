@@ -6,6 +6,7 @@ import Checkout from "./pages/Checkout";
 import AdminLayout from "./layouts/Admin";
 import ProductList from "./pages/admin/product";
 import ProductAdd from "./pages/admin/product/add";
+import CheckPayment from "./pages/CheckPayment";
 
 function App() {
   const element = useRoutes([
@@ -25,6 +26,10 @@ function App() {
           path: "checkout",
           element: <Checkout />,
         },
+        {
+          path: "payment-result",
+          element: <CheckPayment/>
+        }
       ],
     },
     {

@@ -1,6 +1,8 @@
 import { Button, Card, Col, Form, Input, Radio, Row, Table } from "antd";
 import TextArea from "antd/es/input/TextArea";
+import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const data = [
   {
@@ -43,7 +45,7 @@ const columns = [
 
 function Checkout() {
   const [paymentMethod,setPaymentMethod] = useState<number>(1)
-
+  const nav = useNavigate();
 
   // xử lý call api thanh toán
   const handlePayment = async () =>{
@@ -59,6 +61,10 @@ function Checkout() {
       // xử lý thanh toán bằng vnpay
       try {
         // backend
+        const {data} = await axios.get(`http://localhost:3000/create_payment?amount=${total}`)
+        // console.log(data);
+        window.location.href = data.paymentUrl
+
       } catch (error) {
         
       }
