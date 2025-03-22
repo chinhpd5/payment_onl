@@ -60,4 +60,27 @@ paymentRouter.get("/create_payment", (req, res) => {
   let paymentUrl = vnp_Url + "?" + qs.stringify(vnp_Params);
   res.json({ paymentUrl });
 });
+paymentRouter.get("/check_payment", (req, res) => {
+  const query = req.query;
+  const secretKey = "PBNLKF8YGRNCPXLDJLY9V1023CW8206U";
+  const vnp_SecureHash = query.vnp_SecureHash;
+
+  delete query.vnp_SecureHash;
+  const signData = querystring.stringify(query);
+
+  const hmac = crypto.createHmac("sha512", secretKey);
+  const checkSum = hmac.update(signData).digest("hex");
+  console.log(query);
+
+  if (vnp_SecureHash === checkSum) {
+    if (query.vnp_ResponseCode === "00") {
+      res.json({ message: "Thanh toán thành công", data: query });
+    } else {
+      res.json({ message: "Thanh toán thất bại", data: query });
+    }
+  } else {
+    res.status(400).json({ message: "Dữ liệu không hợp lệ" });
+  }
+});
+
 export default paymentRouter;
