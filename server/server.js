@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // chay connect DB truoc routes
-connectMongoDB("mongodb://127.0.0.1:27017/db_nodejs_ca2");
+connectMongoDB("mongodb://127.0.0.1:27017/db_payment_online");
 
 // chay seeding products
 // seedProducts();
