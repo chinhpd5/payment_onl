@@ -66,7 +66,7 @@ paymentRouter.get("/check_payment", (req, res) => {
   const vnp_SecureHash = query.vnp_SecureHash;
 
   delete query.vnp_SecureHash;
-  const signData = querystring.stringify(query);
+  const signData = qs.stringify(query);
 
   const hmac = crypto.createHmac("sha512", secretKey);
   const checkSum = hmac.update(signData).digest("hex");
