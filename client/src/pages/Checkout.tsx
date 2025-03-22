@@ -1,19 +1,21 @@
 import { Button, Card, Col, Form, Input, Radio, Row, Table } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import React from "react";
 
 const data = [
   {
+    key: 1,
     name: "Sản phẩm 1",
     price: 1000,
     quantity: 1,
   },
   {
+    key: 2,
     name: "Sản phẩm 2",
     price: 2000,
     quantity: 2,
   },
   {
+    key: 3,
     name: "Sản phẩm 3",
     price: 3000,
     quantity: 3,
