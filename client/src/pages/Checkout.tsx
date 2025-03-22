@@ -1,5 +1,6 @@
 import { Button, Card, Col, Form, Input, Radio, Row, Table } from "antd";
 import TextArea from "antd/es/input/TextArea";
+import { useState } from "react";
 
 const data = [
   {
@@ -41,6 +42,30 @@ const columns = [
 ];
 
 function Checkout() {
+  const [paymentMethod,setPaymentMethod] = useState<number>(1)
+
+
+  // xử lý call api thanh toán
+  const handlePayment = async () =>{
+    // tổng tiền
+    const total = data.reduce((init,item)=>{
+      return init += item.price * item.quantity
+    },0)
+    // console.log(total);
+
+    // phương thức thanh toán
+    // console.log(paymentMethod);
+    if(paymentMethod == 1){
+      // xử lý thanh toán bằng vnpay
+      try {
+        // backend
+      } catch (error) {
+        
+      }
+    }
+    
+  }
+
   return (
     <div>
       <h1>Thanh toán</h1>
@@ -78,6 +103,9 @@ function Checkout() {
 
             <Radio.Group
               defaultValue={1}
+              onChange={(e)=>{
+                setPaymentMethod(e.target.value)
+              }}
               style={{ display: "flex", flexDirection: "column", gap: 8 }}
             >
               <Radio value={1}>VNPAY</Radio>
@@ -85,7 +113,7 @@ function Checkout() {
               <Radio value={3}>Ship COD</Radio>
             </Radio.Group>
 
-            <Button style={{marginTop:20}} color="primary" variant="solid">Thanh toán</Button>
+            <Button onClick={handlePayment} style={{marginTop:20}} color="primary" variant="solid">Thanh toán</Button>
           </Card>
         </Col>
       </Row>
