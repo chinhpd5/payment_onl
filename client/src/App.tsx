@@ -28,8 +28,8 @@ function App() {
         },
         {
           path: "payment-result",
-          element: <CheckPayment/>
-        }
+          element: <CheckPayment />,
+        },
       ],
     },
     {

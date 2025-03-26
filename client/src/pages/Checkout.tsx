@@ -44,36 +44,34 @@ const columns = [
 ];
 
 function Checkout() {
-  const [paymentMethod,setPaymentMethod] = useState<number>(1)
+  const [paymentMethod, setPaymentMethod] = useState<number>(1);
   const nav = useNavigate();
 
   // xử lý call api thanh toán
-  const handlePayment = async () =>{
+  const handlePayment = async () => {
     // tổng tiền
-    const total = data.reduce((init,item)=>{
-      return init += item.price * item.quantity
-    },0)
+    const total = data.reduce((init, item) => {
+      return (init += item.price * item.quantity);
+    }, 0);
     // console.log(total);
 
     // phương thức thanh toán
     // console.log(paymentMethod);
-    if(paymentMethod == 1){
+    if (paymentMethod == 1) {
       // xử lý thanh toán bằng vnpay
       try {
         // backend
-        const {data} = await axios.get(`http://localhost:3000/create_payment?amount=${total}`)
+        const { data } = await axios.get(
+          `http://localhost:3000/create_payment?amount=${total}`
+        );
         // console.log(data);
-        window.location.href = data.paymentUrl
-
-      } catch (error) {
-        
-      }
+        window.location.href = data.paymentUrl;
+      } catch (error) {}
     }
-    
-  }
+  };
 
   return (
-    <div>
+    <div style={{ padding: 20 }}>
       <h1>Thanh toán</h1>
       <Row>
         <Col span={14}>
@@ -109,8 +107,8 @@ function Checkout() {
 
             <Radio.Group
               defaultValue={1}
-              onChange={(e)=>{
-                setPaymentMethod(e.target.value)
+              onChange={(e) => {
+                setPaymentMethod(e.target.value);
               }}
               style={{ display: "flex", flexDirection: "column", gap: 8 }}
             >
@@ -119,7 +117,14 @@ function Checkout() {
               <Radio value={3}>Ship COD</Radio>
             </Radio.Group>
 
-            <Button onClick={handlePayment} style={{marginTop:20}} color="primary" variant="solid">Thanh toán</Button>
+            <Button
+              onClick={handlePayment}
+              style={{ marginTop: 20 }}
+              color="primary"
+              variant="solid"
+            >
+              Thanh toán
+            </Button>
           </Card>
         </Col>
       </Row>

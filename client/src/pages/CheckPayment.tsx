@@ -1,29 +1,35 @@
 import { Button, Result } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 function CheckPayment() {
-  const [searchParams] = useSearchParams();
-  const [status, setStatus] = useState<"success"| "error">("error")
-  const [title, setTitle] = useState<string>("")
+  // const [searchParams] = useSearchParams();
+  const searchParams = new URLSearchParams(useLocation().search);
+  const [status, setStatus] = useState<"success" | "error">("error");
+  const [title, setTitle] = useState<string>("");
+  const paymentMethod = searchParams.get("paymentMethod");
+
+  console.log({ searchParams, paymentMethod });
 
   useEffect(() => {
     (async () => {
       try {
-        // console.log(searchParams);
         const { data } = await axios.get(
           `http://localhost:3000/check_payment?${searchParams.toString()}`
         );
-        // console.log(data);
-        if (data.data.vnp_ResponseCode == "00") {
+        if (
+          (paymentMethod == "vnpay" && data.data.vnp_ResponseCode == "00") ||
+          (paymentMethod == "zalopay" && data.data.status == "1")
+        ) {
           // thành công
-          setStatus("success")
-          setTitle("Thanh toán thành công")
-        }else if(data.data.vnp_ResponseCode == "24"){
-          setStatus("error")
-          setTitle("Khách hàng hủy thanh toán")
+          setStatus("success");
+          setTitle("Thanh toán thành công");
+          return;
         }
+
+        setStatus("error");
+        setTitle("Khách hàng hủy thanh toán");
       } catch (error) {}
     })();
   }, [searchParams]);
