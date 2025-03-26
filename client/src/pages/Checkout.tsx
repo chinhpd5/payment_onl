@@ -65,26 +65,29 @@ function Checkout() {
         return;
       }
       if (values.paymentMethod == "zalopay") {
-        alert(values.paymentMethod);
         // xử lý thanh toán bằng zalopay
-        // const { data } = await axios.get(
-        //   `http://localhost:3000/create_payment?amount=${total}`
-        // );
-        // window.location.href = data.paymentUrl;
+        const { data } = await axios.post(
+          `http://localhost:3000/create_zalopay_order`,
+          {
+            amount: total,
+          }
+        );
+
+        window.location.href = data.order_url;
         return;
       }
-      // ship
-      const { data } = await axios.post("http://localhost:3000/orders", {
-        products: productList,
-        paymentMethod: values.paymentMethod,
-        user: {
-          username: values.name,
-          address: values.address,
-          phone: values.phone,
-          email: values.email,
-        },
-      });
-      console.log(data);
+      // ship COD
+      // const { data } = await axios.post("http://localhost:3000/orders", {
+      //   products: productList,
+      //   paymentMethod: values.paymentMethod,
+      //   user: {
+      //     username: values.name,
+      //     address: values.address,
+      //     phone: values.phone,
+      //     email: values.email,
+      //   },
+      // });
+      // console.log(data);
     } catch (error) {}
   };
 
