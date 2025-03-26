@@ -4,7 +4,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const data = [
+const productList = [
   {
     key: 1,
     name: "Sản phẩm 1",
@@ -44,43 +44,64 @@ const columns = [
 ];
 
 function Checkout() {
-  const [paymentMethod, setPaymentMethod] = useState<number>(1);
+  // const [paymentMethod, setPaymentMethod] = useState<number>(1);
   const nav = useNavigate();
 
   // xử lý call api thanh toán
-  const handlePayment = async () => {
+  const handlePayment = async (values: any) => {
     // tổng tiền
-    const total = data.reduce((init, item) => {
+    const total = productList.reduce((init, item) => {
       return (init += item.price * item.quantity);
     }, 0);
     // console.log(total);
-
-    // phương thức thanh toán
-    // console.log(paymentMethod);
-    if (paymentMethod == 1) {
-      // xử lý thanh toán bằng vnpay
-      try {
-        // backend
+    console.log(values);
+    try {
+      if (values.paymentMethod == "vnpay") {
+        // xử lý thanh toán bằng vnpay
         const { data } = await axios.get(
           `http://localhost:3000/create_payment?amount=${total}`
         );
-        // console.log(data);
         window.location.href = data.paymentUrl;
-      } catch (error) {}
-    }
+        return;
+      }
+      if (values.paymentMethod == "zalopay") {
+        alert(values.paymentMethod);
+        // xử lý thanh toán bằng zalopay
+        // const { data } = await axios.get(
+        //   `http://localhost:3000/create_payment?amount=${total}`
+        // );
+        // window.location.href = data.paymentUrl;
+        return;
+      }
+      // ship
+      const { data } = await axios.post("http://localhost:3000/orders", {
+        products: productList,
+        paymentMethod: values.paymentMethod,
+        user: {
+          username: values.name,
+          address: values.address,
+          phone: values.phone,
+          email: values.email,
+        },
+      });
+      console.log(data);
+    } catch (error) {}
   };
 
   return (
     <div style={{ padding: 20 }}>
       <h1>Thanh toán</h1>
-      <Row>
-        <Col span={14}>
-          {/* Thông tin nhận */}
-          <Form
-            layout="vertical"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-          >
+      <Form
+        layout="vertical"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        onFinish={handlePayment}
+        initialValues={{ paymentMethod: "vnpay" }}
+      >
+        <Row>
+          <Col span={14}>
+            {/* Thông tin nhận */}
+
             <Form.Item label="Họ và tên" name="name">
               <Input />
             </Form.Item>
@@ -96,38 +117,43 @@ function Checkout() {
             <Form.Item label="Địa chỉ" name="address">
               <TextArea rows={4} />
             </Form.Item>
-          </Form>
-        </Col>
+          </Col>
 
-        <Col span={10}>
-          {/* Thông tin sản phẩm */}
-          <Card title="Thông tin sản phẩm">
-            <Table pagination={false} dataSource={data} columns={columns} />
-            <h3>Tổng tiền: 3000</h3>
+          <Col span={10}>
+            {/* Thông tin sản phẩm */}
+            <Card title="Thông tin sản phẩm">
+              <Table
+                pagination={false}
+                dataSource={productList}
+                columns={columns}
+              />
+              <h3>Tổng tiền: 3000</h3>
+              <Form.Item label="Payment Method" name="paymentMethod">
+                <Radio.Group
+                  // onChange={(e) => {
+                  //   setPaymentMethod(e.target.value);
+                  // }}
+                  style={{ display: "flex", flexDirection: "column", gap: 8 }}
+                >
+                  <Radio value={"vnpay"}>VNPAY</Radio>
+                  <Radio value={"zalopay"}>ZALOPAY</Radio>
+                  <Radio value={"cod"}>Ship COD</Radio>
+                </Radio.Group>
+              </Form.Item>
 
-            <Radio.Group
-              defaultValue={1}
-              onChange={(e) => {
-                setPaymentMethod(e.target.value);
-              }}
-              style={{ display: "flex", flexDirection: "column", gap: 8 }}
-            >
-              <Radio value={1}>VNPAY</Radio>
-              <Radio value={2}>ZALOPAY</Radio>
-              <Radio value={3}>Ship COD</Radio>
-            </Radio.Group>
-
-            <Button
-              onClick={handlePayment}
-              style={{ marginTop: 20 }}
-              color="primary"
-              variant="solid"
-            >
-              Thanh toán
-            </Button>
-          </Card>
-        </Col>
-      </Row>
+              <Button
+                // onClick={handlePayment}
+                style={{ marginTop: 20 }}
+                color="primary"
+                variant="solid"
+                htmlType="submit"
+              >
+                Thanh toán
+              </Button>
+            </Card>
+          </Col>
+        </Row>
+      </Form>
     </div>
   );
 }
