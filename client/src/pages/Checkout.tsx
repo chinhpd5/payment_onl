@@ -44,33 +44,41 @@ const columns = [
 ];
 
 function Checkout() {
-  const [paymentMethod,setPaymentMethod] = useState<number>(1)
+  const [paymentMethod, setPaymentMethod] = useState<string>("VNPAY");
   const nav = useNavigate();
 
   // xử lý call api thanh toán
-  const handlePayment = async () =>{
+  const handlePayment = async () => {
     // tổng tiền
-    const total = data.reduce((init,item)=>{
-      return init += item.price * item.quantity
-    },0)
+    const total = data.reduce((init, item) => {
+      return (init += item.price * item.quantity);
+    }, 0);
     // console.log(total);
 
     // phương thức thanh toán
     // console.log(paymentMethod);
-    if(paymentMethod == 1){
-      // xử lý thanh toán bằng vnpay
-      try {
-        // backend
-        const {data} = await axios.get(`http://localhost:3000/create_payment?amount=${total}`)
-        // console.log(data);
-        window.location.href = data.paymentUrl
 
-      } catch (error) {
-        
+    // xử lý thanh toán bằng vnpay
+    try {
+      // VNPAY
+      console.log(paymentMethod);
+
+      if (paymentMethod == "VNPAY") {
+        const { data } = await axios.get(
+          `http://localhost:3000/create_payment?amount=${total}`
+        );
+
+        window.location.href = data.paymentUrl;
+      } else if (paymentMethod == "ZALOPAY") {
+        const { data } = await axios.post(
+          `http://localhost:3000/create_zalopay_order?amount=${total}`
+        );
+        console.log(data);
+        window.location.href = data.order_url;
       }
-    }
-    
-  }
+      // ZALOPAY
+    } catch (error) {}
+  };
 
   return (
     <div>
@@ -108,18 +116,25 @@ function Checkout() {
             <h3>Tổng tiền: 3000</h3>
 
             <Radio.Group
-              defaultValue={1}
-              onChange={(e)=>{
-                setPaymentMethod(e.target.value)
+              defaultValue={"VNPAY"}
+              onChange={(e) => {
+                setPaymentMethod(e.target.value);
               }}
               style={{ display: "flex", flexDirection: "column", gap: 8 }}
             >
-              <Radio value={1}>VNPAY</Radio>
-              <Radio value={2}>ZALOPAY</Radio>
-              <Radio value={3}>Ship COD</Radio>
+              <Radio value={"VNPAY"}>VNPAY</Radio>
+              <Radio value={"ZALOPAY"}>ZALOPAY</Radio>
+              <Radio value={"COD"}>Ship COD</Radio>
             </Radio.Group>
 
-            <Button onClick={handlePayment} style={{marginTop:20}} color="primary" variant="solid">Thanh toán</Button>
+            <Button
+              onClick={handlePayment}
+              style={{ marginTop: 20 }}
+              color="primary"
+              variant="solid"
+            >
+              Thanh toán
+            </Button>
           </Card>
         </Col>
       </Row>
